@@ -340,11 +340,11 @@ class NMT(nn.Module):
         ###         https://pytorch.org/docs/stable/torch.html#torch.cat
         ###     Tanh:
         ###         https://pytorch.org/docs/stable/torch.html#torch.tanh
-        alpha_t = torch.nn.functional.softmax(e_t, dim=-1)
-        a_t = torch.bmm(alpha_t.unsqueeze(1), enc_hiddens).squeeze()
-        U_t = torch.cat([a_t, dec_hidden], dim=1)
+        alpha_t = torch.nn.functional.softmax(e_t, dim=1)
+        a_t = torch.squeeze(torch.bmm(alpha_t.unsqueeze(dim=1), enc_hiddens), dim=1)
+        U_t = torch.cat([dec_hidden, a_t], dim=1)
         V_t = self.combined_output_projection(U_t)
-        O_t = self.dropout(torch.nn.functional.tanh(V_t))
+        O_t = self.dropout(torch.tanh(V_t))
         ### END YOUR CODE
 
         combined_output = O_t
